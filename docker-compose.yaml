@@ -10,7 +10,7 @@ services:
     volumes:
       - postgres:/data/postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
     networks:
       - postgres
     restart: unless-stopped
@@ -23,7 +23,7 @@ services:
     volumes:
       - mysql:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "3307:3306"
     networks:
       - mysql
     restart: unless-stopped

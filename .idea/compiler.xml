@@ -6,18 +6,21 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="notification" />
         <module name="users" />
         <module name="measurements" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="measurements" target="17" />
+      <module name="notification" target="17" />
       <module name="users" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="measurements" options="-parameters" />
+      <module name="notification" options="-parameters" />
       <module name="users" options="-parameters" />
     </option>
   </component>
