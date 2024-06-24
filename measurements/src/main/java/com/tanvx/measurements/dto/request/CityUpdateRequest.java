@@ -1,5 +1,5 @@
 package com.tanvx.measurements.dto.request;
 
-public class CityUpdateRequest {
+public record CityUpdateRequest(Long id, String name) {
 
 }

@@ -1,5 +1,5 @@
 package com.tanvx.measurements.dto.response;
 
-public class CityCreateResponse {
+public record CityCreateResponse(Long id, String name) {
 
 }

@@ -1,5 +1,5 @@
 package com.tanvx.measurements.dto.request;
 
-public class CityRequest {
+public record CityRequest (int page, int size, String field) {
 
 }
