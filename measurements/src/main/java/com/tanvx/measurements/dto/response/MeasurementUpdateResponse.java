@@ -1,5 +1,9 @@
 package com.tanvx.measurements.dto.response;
 
-public class MeasurementUpdateResponse {
+import java.time.LocalDateTime;
+
+public record MeasurementUpdateResponse(
+    Long id, Double temperature, LocalDateTime measurementTime, Boolean deleteFlg,
+    String cityName) {
 
 }

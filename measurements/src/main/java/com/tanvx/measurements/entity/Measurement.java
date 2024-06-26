@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,8 +25,12 @@ public class Measurement {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private Double temperature;
-  private LocalDate measurementTime;
+  private LocalDateTime measurementTime;
   private Boolean deleteFlg;
+  private LocalDateTime createdAt;
+  private String createdBy;
+  private LocalDateTime updatedAt;
+  private String updatedBy;
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "city_id")
   private City city;
