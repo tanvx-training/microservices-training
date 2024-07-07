@@ -20,3 +20,6 @@ spring:
   sql:
     init:
       encoding: UTF-8
+  batch:
+    jdbc:
+      initialize-schema: always
