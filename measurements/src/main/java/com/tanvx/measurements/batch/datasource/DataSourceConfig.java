@@ -1,4 +1,4 @@
-package com.tanvx.measurements.batch;
+package com.tanvx.measurements.batch.datasource;
 
 import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;

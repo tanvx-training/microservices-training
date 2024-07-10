@@ -1,5 +1,10 @@
 package com.tanvx.measurements.batch.model;
 
-public record MeasurementCsv (String city, Double temperature) {
+import lombok.Data;
 
+@Data
+public class MeasurementCsv {
+  private String city;
+
+  private Double temperature;
 }
