@@ -1,13 +1,15 @@
 package com.tanvx.measurements.batch.processor;
 
 import com.tanvx.measurements.batch.model.MeasurementCsv;
+import com.tanvx.measurements.entity.City;
 import com.tanvx.measurements.entity.Measurement;
-import com.tanvx.measurements.repository.CityRepository;
 import com.tanvx.measurements.util.DateTimeUtil;
-import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -19,7 +21,7 @@ public class ProcessorMeasurement implements ItemProcessor<MeasurementCsv, Measu
 
   private static final LocalDateTime endTime = LocalDateTime.of(2024, 1, 1, 0, 0, 0, 0);
 
-  private final CityRepository cityRepository;
+    private final Map<String, City> mapCity;
 
   @Override
   public Measurement process(MeasurementCsv item) {
@@ -30,7 +32,7 @@ public class ProcessorMeasurement implements ItemProcessor<MeasurementCsv, Measu
     measurement.setDeleteFlg(Boolean.FALSE);
     measurement.setCreatedAt(LocalDateTime.now());
     measurement.setCreatedBy(CREATE_BY);
-    measurement.setCity(cityRepository.findByName(item.getCity()).orElse(null));
+    measurement.setCity(mapCity.get(item.getCity()));
     return measurement;
   }
 }
