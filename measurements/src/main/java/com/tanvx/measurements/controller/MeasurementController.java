@@ -4,12 +4,17 @@ import com.tanvx.measurements.common.ApiResponse;
 import com.tanvx.measurements.dto.request.MeasurementCreateRequest;
 import com.tanvx.measurements.dto.request.MeasurementRequest;
 import com.tanvx.measurements.dto.request.MeasurementUpdateRequest;
+import com.tanvx.measurements.dto.response.MeasurementCityResponse;
 import com.tanvx.measurements.dto.response.MeasurementCreateResponse;
 import com.tanvx.measurements.dto.response.MeasurementDeleteResponse;
 import com.tanvx.measurements.dto.response.MeasurementResponse;
 import com.tanvx.measurements.dto.response.MeasurementUpdateResponse;
+import com.tanvx.measurements.service.MeasurementService;
+import java.time.Duration;
+import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class MeasurementController {
+
+  private final MeasurementService measurementService;
 
   // Create a Measurement
   @PostMapping("/measurements")
@@ -43,10 +50,19 @@ public class MeasurementController {
 
   // Get Measurements by City ID
   @GetMapping("/cities/{cityId}/measurements")
-  public ResponseEntity<ApiResponse<MeasurementCreateResponse>> getMeasurementsByCityId(
+  public ResponseEntity<ApiResponse<MeasurementCityResponse>> getMeasurementsByCityId(
       @PathVariable Long cityId) {
-
-    return null;
+    log.info("Invoking MeasurementController - getMeasurementsByCityId: cityId={}", cityId);
+    Instant start = Instant.now();
+    MeasurementCityResponse response = measurementService.findMeasurementByCityIdInJpa(cityId);
+    Instant end = Instant.now();
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(ApiResponse
+            .<MeasurementCityResponse>builder()
+            .data(response)
+            .executionTime(Duration.between(start, end))
+            .message("Success")
+            .build());
   }
 
   // Update a Measurement

@@ -4,6 +4,7 @@ import com.tanvx.measurements.dto.request.MeasurementCreateRequest;
 import com.tanvx.measurements.dto.request.MeasurementDeleteRequest;
 import com.tanvx.measurements.dto.request.MeasurementRequest;
 import com.tanvx.measurements.dto.request.MeasurementUpdateRequest;
+import com.tanvx.measurements.dto.response.MeasurementCityResponse;
 import com.tanvx.measurements.dto.response.MeasurementCreateResponse;
 import com.tanvx.measurements.dto.response.MeasurementDeleteResponse;
 import com.tanvx.measurements.dto.response.MeasurementResponse;
@@ -18,6 +19,20 @@ public interface MeasurementService {
    * @return Page<MeasurementResponse>
    */
   Page<MeasurementResponse> findMeasurement(MeasurementRequest request);
+
+  /**
+   * Get page measurements
+   * @param cityId Long
+   * @return Page<MeasurementResponse>
+   */
+  MeasurementCityResponse findMeasurementByCityIdInJpa(Long cityId);
+
+  /**
+   * Get page measurements
+   * @param cityId Long
+   * @return Page<MeasurementResponse>
+   */
+  MeasurementCityResponse findMeasurementByCityIdInNative(Long cityId);
 
   /**
    * Create new measurement
