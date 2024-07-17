@@ -1,22 +1,10 @@
 package com.tanvx.measurements.repository.query;
 
 import java.time.LocalDateTime;
-import lombok.Builder;
-import lombok.Data;
 
-@Data
-@Builder
-public class MeasurementCityQueryResponse {
+public interface MeasurementCityQueryResponse {
 
-  private String city;
+  Double getTemperature();
 
-  private double temperatureMax;
-
-  private LocalDateTime temperatureMaxTime;
-
-  private double temperatureMin;
-
-  private LocalDateTime temperatureMinTime;
-
-  private double average;
+  LocalDateTime getMeasurementTime();
 }
