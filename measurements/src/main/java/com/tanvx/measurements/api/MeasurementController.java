@@ -54,7 +54,7 @@ public class MeasurementController {
       @PathVariable Long cityId) {
     log.info("Invoking MeasurementController - getMeasurementsByCityId: cityId={}", cityId);
     Instant start = Instant.now();
-    MeasurementCityResponse response = measurementService.findMeasurementByCityIdInNative(cityId);
+    MeasurementCityResponse response = measurementService.findMeasurementByCityIdInCustom(cityId);
     Instant end = Instant.now();
     return ResponseEntity.status(HttpStatus.OK)
         .body(ApiResponse

@@ -28,7 +28,7 @@ public class ScheduledTasks {
 
   private final CityRepository cityRepository;
 
-  @Scheduled(cron = "0 20 22 * * ?")
+//  @Scheduled(cron = "0 20 22 * * ?")
   public void migrateCity() {
     // Implement logic to migrate city data
     log.info("Starting migration...: {}", Instant.now());

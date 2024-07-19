@@ -119,6 +119,33 @@ public class MeasurementServiceImpl implements MeasurementService {
   }
 
   @Override
+  public MeasurementCityResponse findMeasurementByCityIdInCustom(Long cityId) {
+
+    // Validate city ID
+    Optional<City> optionalCity = cityRepository.findById(cityId);
+    if (optionalCity.isEmpty()) {
+      throw new ServiceException(HttpStatus.BAD_REQUEST, CITY_NOT_FOUND_ERROR);
+    }
+    // Find max measurement by temperature and city id
+    MeasurementCityQueryResponse max = measurementRepository
+        .findMaxMeasurementCustom(cityId);
+    // Find min measurement by temperature and city id
+    MeasurementCityQueryResponse min = measurementRepository
+        .findMinMeasurementCustom(cityId);
+    // Find average measurement by temperature and city id
+    Double averageTemperature = measurementRepository.findAverageTemperatureCustom(cityId);
+
+    return MeasurementCityResponse.builder()
+        .city(optionalCity.get().getName())
+        .max(MeasurementCityData.builder().temperature(max.getTemperature())
+            .measurementTime(max.getMeasurementTime()).build())
+        .min(MeasurementCityData.builder().temperature(min.getTemperature())
+            .measurementTime(min.getMeasurementTime()).build())
+        .average(BigDecimal.valueOf(averageTemperature).setScale(2, RoundingMode.HALF_UP))
+        .build();
+  }
+
+  @Override
   public MeasurementCityResponse findMeasurementByCityIdInNative(Long cityId) {
 
     // Validate city ID

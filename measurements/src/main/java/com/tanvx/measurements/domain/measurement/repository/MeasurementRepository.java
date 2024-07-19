@@ -8,28 +8,24 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MeasurementRepository extends JpaRepository<Measurement, Long> {
+public interface MeasurementRepository extends JpaRepository<Measurement, Long>, CustomMeasurementRepository {
 
   @Query(nativeQuery = true,
       value = """
-          SELECT  m.temperature,
-                  m.measurement_time
-          FROM  _city c
-                  INNER JOIN  _measurement m ON c.id = m.city_id
-          WHERE m.temperature = (SELECT MAX(temperature) FROM _measurement WHERE city_id = c.id)
-          AND c.id = :cityId"""
+          SELECT m.temperature, m.measurement_time FROM _measurement m
+                   WHERE city_id = :cityId
+          ORDER BY m.temperature DESC
+          LIMIT 1"""
   )
   MeasurementCityQueryResponse findMaxMeasurementByTemperatureAndCityId(
       @Param("cityId") Long cityId);
 
   @Query(nativeQuery = true,
       value = """
-          SELECT  m.temperature,
-                  m.measurement_time
-          FROM  _city c
-                  INNER JOIN  _measurement m ON c.id = m.city_id
-          WHERE m.temperature = (SELECT MIN(temperature) FROM _measurement WHERE city_id = c.id)
-          AND c.id = :cityId"""
+          SELECT m.temperature, m.measurement_time FROM _measurement m
+                   WHERE city_id = :cityId
+          ORDER BY m.temperature ASC
+          LIMIT 1"""
   )
   MeasurementCityQueryResponse findMinMeasurementByTemperatureAndCityId(
       @Param("cityId") Long cityId);

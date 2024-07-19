@@ -34,6 +34,8 @@ public interface MeasurementService {
    */
   MeasurementCityResponse findMeasurementByCityIdInNative(Long cityId);
 
+  MeasurementCityResponse findMeasurementByCityIdInCustom(Long cityId);
+
   /**
    * Create new measurement
    * @param request MeasurementCreateRequest
