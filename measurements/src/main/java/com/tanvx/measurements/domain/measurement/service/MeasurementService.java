@@ -13,30 +13,13 @@ import org.springframework.data.domain.Page;
 
 public interface MeasurementService {
 
-  /**
-   * Get page measurements
-   * @param request MeasurementRequest
-   * @return Page<MeasurementResponse>
-   */
   Page<MeasurementResponse> findMeasurement(MeasurementRequest request);
 
-  /**
-   * Get page measurements
-   * @param cityId Long
-   * @return Page<MeasurementResponse>
-   */
   MeasurementCityResponse findMeasurementUsingJpa(Long cityId);
 
-  /**
-   * Get page measurements
-   * @param cityId Long
-   * @return Page<MeasurementResponse>
-   */
   MeasurementCityResponse findMeasurementUsingJpaWithNativeQuery(Long cityId);
 
   MeasurementCityResponse findMeasurementUsingJpaWithJPQL(Long cityId);
-
-  MeasurementCityResponse findMeasurementByCityIdInCustom(Long cityId);
 
   /**
    * Create new measurement
