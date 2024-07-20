@@ -25,14 +25,16 @@ public interface MeasurementService {
    * @param cityId Long
    * @return Page<MeasurementResponse>
    */
-  MeasurementCityResponse findMeasurementByCityIdInJpa(Long cityId);
+  MeasurementCityResponse findMeasurementUsingJpa(Long cityId);
 
   /**
    * Get page measurements
    * @param cityId Long
    * @return Page<MeasurementResponse>
    */
-  MeasurementCityResponse findMeasurementByCityIdInNative(Long cityId);
+  MeasurementCityResponse findMeasurementUsingJpaWithNativeQuery(Long cityId);
+
+  MeasurementCityResponse findMeasurementUsingJpaWithJPQL(Long cityId);
 
   MeasurementCityResponse findMeasurementByCityIdInCustom(Long cityId);
 

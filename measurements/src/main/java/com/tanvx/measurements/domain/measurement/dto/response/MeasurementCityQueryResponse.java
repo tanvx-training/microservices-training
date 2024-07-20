@@ -2,9 +2,6 @@ package com.tanvx.measurements.domain.measurement.dto.response;
 
 import java.time.LocalDateTime;
 
-public interface MeasurementCityQueryResponse {
+public record MeasurementCityQueryResponse (Double temperature, LocalDateTime measurementTime) {
 
-  Double getTemperature();
-
-  LocalDateTime getMeasurementTime();
 }

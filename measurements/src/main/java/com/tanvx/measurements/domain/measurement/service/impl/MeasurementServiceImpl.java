@@ -52,7 +52,7 @@ public class MeasurementServiceImpl implements MeasurementService {
   }
 
   @Override
-  public MeasurementCityResponse findMeasurementByCityIdInJpa(Long cityId) {
+  public MeasurementCityResponse findMeasurementUsingJpa(Long cityId) {
     // Validate city ID
     Optional<City> optionalCity = cityRepository.findById(cityId);
     if (optionalCity.isEmpty()) {
@@ -137,16 +137,16 @@ public class MeasurementServiceImpl implements MeasurementService {
 
     return MeasurementCityResponse.builder()
         .city(optionalCity.get().getName())
-        .max(MeasurementCityData.builder().temperature(max.getTemperature())
-            .measurementTime(max.getMeasurementTime()).build())
-        .min(MeasurementCityData.builder().temperature(min.getTemperature())
-            .measurementTime(min.getMeasurementTime()).build())
+        .max(MeasurementCityData.builder().temperature(max.temperature())
+            .measurementTime(max.measurementTime()).build())
+        .min(MeasurementCityData.builder().temperature(min.temperature())
+            .measurementTime(min.measurementTime()).build())
         .average(BigDecimal.valueOf(averageTemperature).setScale(2, RoundingMode.HALF_UP))
         .build();
   }
 
   @Override
-  public MeasurementCityResponse findMeasurementByCityIdInNative(Long cityId) {
+  public MeasurementCityResponse findMeasurementUsingJpaWithNativeQuery(Long cityId) {
 
     // Validate city ID
     Optional<City> optionalCity = cityRepository.findById(cityId);
@@ -164,12 +164,38 @@ public class MeasurementServiceImpl implements MeasurementService {
 
     return MeasurementCityResponse.builder()
         .city(optionalCity.get().getName())
-        .max(MeasurementCityData.builder().temperature(max.getTemperature())
-            .measurementTime(max.getMeasurementTime()).build())
-        .min(MeasurementCityData.builder().temperature(min.getTemperature())
-            .measurementTime(min.getMeasurementTime()).build())
+        .max(MeasurementCityData.builder().temperature(max.temperature())
+            .measurementTime(max.measurementTime()).build())
+        .min(MeasurementCityData.builder().temperature(min.temperature())
+            .measurementTime(min.measurementTime()).build())
         .average(BigDecimal.valueOf(averageTemperature).setScale(2, RoundingMode.HALF_UP))
         .build();
+  }
+
+  @Override
+  public MeasurementCityResponse findMeasurementUsingJpaWithJPQL(Long cityId) {
+    // Validate city ID
+    Optional<City> optionalCity = cityRepository.findById(cityId);
+    if (optionalCity.isEmpty()) {
+      throw new ServiceException(HttpStatus.BAD_REQUEST, CITY_NOT_FOUND_ERROR);
+    }
+    // Find max measurement by temperature and city id
+    MeasurementCityQueryResponse max = measurementRepository
+            .findMeasurementWithMaxTemperature(cityId);
+    // Find min measurement by temperature and city id
+    MeasurementCityQueryResponse min = measurementRepository
+            .findMeasurementWithMinTemperature(cityId);
+    // Find average measurement by temperature and city id
+    Double averageTemperature = measurementRepository.findMeasurementWithAverageTemperature(cityId);
+
+    return MeasurementCityResponse.builder()
+            .city(optionalCity.get().getName())
+            .max(MeasurementCityData.builder().temperature(max.temperature())
+                    .measurementTime(max.measurementTime()).build())
+            .min(MeasurementCityData.builder().temperature(min.temperature())
+                    .measurementTime(min.measurementTime()).build())
+            .average(BigDecimal.valueOf(averageTemperature).setScale(2, RoundingMode.HALF_UP))
+            .build();
   }
 
   @Override
