@@ -2,10 +2,8 @@ package com.tanvx.measurements.domain.city.service.impl;
 
 import com.tanvx.measurements.domain.city.dto.request.CityCreateRequest;
 import com.tanvx.measurements.domain.city.dto.request.CityRequest;
-import com.tanvx.measurements.domain.city.dto.request.CityUpdateRequest;
 import com.tanvx.measurements.domain.city.dto.response.CityCreateResponse;
 import com.tanvx.measurements.domain.city.dto.response.CityResponse;
-import com.tanvx.measurements.domain.city.dto.response.CityUpdateResponse;
 import com.tanvx.measurements.domain.city.entity.City;
 import com.tanvx.measurements.app.dto.exception.ServiceException;
 import com.tanvx.measurements.domain.city.repository.CityRepository;
@@ -79,19 +77,4 @@ public class CityServiceImpl implements CityService {
     return new CityCreateResponse(city.getId(), city.getName());
   }
 
-  @Override
-  public CityUpdateResponse updateCity(CityUpdateRequest request) {
-
-    validationUtil.validateRequest(request);
-
-    Optional<City> optionalCity = cityRepository.findById(request.id());
-    if(optionalCity.isEmpty()) {
-      throw new ServiceException(HttpStatus.BAD_REQUEST, CITY_NOT_FOUND_ERROR);
-    }
-    City city = optionalCity.get();
-    city.setName(request.name());
-    cityRepository.save(city);
-
-    return new CityUpdateResponse(city.getId(), city.getName());
-  }
 }

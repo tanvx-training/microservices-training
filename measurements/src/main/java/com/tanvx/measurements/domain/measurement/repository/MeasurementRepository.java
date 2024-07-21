@@ -1,18 +1,19 @@
 package com.tanvx.measurements.domain.measurement.repository;
 
 import com.tanvx.measurements.domain.measurement.entity.Measurement;
-import com.tanvx.measurements.domain.measurement.dto.response.MeasurementCityQueryResponse;
+import com.tanvx.measurements.domain.measurement.repository.query.MeasurementCityNativeQueryResponse;
+import com.tanvx.measurements.domain.measurement.repository.query.MeasurementCityQueryResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MeasurementRepository extends JpaRepository<Measurement, Long>, CustomMeasurementRepository {
+public interface MeasurementRepository extends JpaRepository<Measurement, Long> {
 
   /**Using JPA with JPQL**/
   @Query("""
-  SELECT new com.tanvx.measurements.domain.measurement.dto.response.MeasurementCityQueryResponse(m.temperature, m.measurementTime)
+  SELECT new com.tanvx.measurements.domain.measurement.repository.query.MeasurementCityQueryResponse(m.temperature, m.measurementTime)
   FROM Measurement m
   JOIN FETCH City c
   ON m.city.id = c.id
@@ -23,7 +24,7 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Long>,
   MeasurementCityQueryResponse findMeasurementWithMaxTemperature(@Param("cityId") Long id);
 
   @Query("""
-  SELECT new com.tanvx.measurements.domain.measurement.dto.response.MeasurementCityQueryResponse(m.temperature, m.measurementTime)
+  SELECT new com.tanvx.measurements.domain.measurement.repository.query.MeasurementCityQueryResponse(m.temperature, m.measurementTime)
   FROM Measurement m
   JOIN FETCH City c
   ON m.city.id = c.id
@@ -50,7 +51,7 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Long>,
           ORDER BY m.temperature DESC
           LIMIT 1"""
   )
-  MeasurementCityQueryResponse findMaxMeasurementByTemperatureAndCityId(
+  MeasurementCityNativeQueryResponse findMaxMeasurementByTemperatureAndCityId(
       @Param("cityId") Long cityId);
 
   @Query(nativeQuery = true,
@@ -60,7 +61,7 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Long>,
           ORDER BY m.temperature ASC
           LIMIT 1"""
   )
-  MeasurementCityQueryResponse findMinMeasurementByTemperatureAndCityId(
+  MeasurementCityNativeQueryResponse  findMinMeasurementByTemperatureAndCityId(
       @Param("cityId") Long cityId);
 
   @Query(nativeQuery = true,

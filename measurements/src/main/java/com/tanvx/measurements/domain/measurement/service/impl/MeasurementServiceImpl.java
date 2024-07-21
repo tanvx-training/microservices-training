@@ -1,27 +1,24 @@
 package com.tanvx.measurements.domain.measurement.service.impl;
 
 import com.tanvx.measurements.domain.measurement.dto.request.MeasurementCreateRequest;
-import com.tanvx.measurements.domain.measurement.dto.request.MeasurementDeleteRequest;
 import com.tanvx.measurements.domain.measurement.dto.request.MeasurementRequest;
-import com.tanvx.measurements.domain.measurement.dto.request.MeasurementUpdateRequest;
 import com.tanvx.measurements.domain.measurement.dto.response.MeasurementCityResponse;
 import com.tanvx.measurements.domain.measurement.dto.response.MeasurementCityResponse.MeasurementCityData;
 import com.tanvx.measurements.domain.measurement.dto.response.MeasurementCreateResponse;
-import com.tanvx.measurements.domain.measurement.dto.response.MeasurementDeleteResponse;
 import com.tanvx.measurements.domain.measurement.dto.response.MeasurementResponse;
-import com.tanvx.measurements.domain.measurement.dto.response.MeasurementUpdateResponse;
 import com.tanvx.measurements.domain.city.entity.City;
 import com.tanvx.measurements.domain.measurement.entity.Measurement;
 import com.tanvx.measurements.app.dto.exception.ServiceException;
 import com.tanvx.measurements.domain.city.repository.CityRepository;
 import com.tanvx.measurements.domain.measurement.repository.MeasurementRepository;
-import com.tanvx.measurements.domain.measurement.dto.response.MeasurementCityQueryResponse;
+import com.tanvx.measurements.domain.measurement.repository.query.MeasurementCityNativeQueryResponse;
+import com.tanvx.measurements.domain.measurement.repository.query.MeasurementCityQueryResponse;
 import com.tanvx.measurements.domain.measurement.service.MeasurementService;
 import com.tanvx.measurements.infrastructure.util.ValidationUtil;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.Comparator;
-import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -127,20 +124,20 @@ public class MeasurementServiceImpl implements MeasurementService {
       throw new ServiceException(HttpStatus.BAD_REQUEST, CITY_NOT_FOUND_ERROR);
     }
     // Find max measurement by temperature and city id
-    MeasurementCityQueryResponse max = measurementRepository
+    MeasurementCityNativeQueryResponse maxTemperature = measurementRepository
         .findMaxMeasurementByTemperatureAndCityId(cityId);
     // Find min measurement by temperature and city id
-    MeasurementCityQueryResponse min = measurementRepository
+    MeasurementCityNativeQueryResponse minTemperature = measurementRepository
         .findMinMeasurementByTemperatureAndCityId(cityId);
     // Find average measurement by temperature and city id
     Double averageTemperature = measurementRepository.findAverageTemperature(cityId);
 
     return MeasurementCityResponse.builder()
         .city(optionalCity.get().getName())
-        .max(MeasurementCityData.builder().temperature(max.temperature())
-            .measurementTime(max.measurementTime()).build())
-        .min(MeasurementCityData.builder().temperature(min.temperature())
-            .measurementTime(min.measurementTime()).build())
+        .max(MeasurementCityData.builder().temperature(maxTemperature.getTemperature())
+            .measurementTime(maxTemperature.getMeasurementTime()).build())
+        .min(MeasurementCityData.builder().temperature(minTemperature.getTemperature())
+            .measurementTime(minTemperature.getMeasurementTime()).build())
         .average(BigDecimal.valueOf(averageTemperature).setScale(2, RoundingMode.HALF_UP))
         .build();
   }
@@ -185,45 +182,12 @@ public class MeasurementServiceImpl implements MeasurementService {
     measurement.setMeasurementTime(request.measurementTime());
     measurement.setDeleteFlg(Boolean.FALSE);
     measurement.setCity(optionalCity.get());
+    measurement.setCreatedAt(LocalDateTime.now());
+    measurement.setCreatedBy("System");
     measurementRepository.save(measurement);
 
     return new MeasurementCreateResponse(measurement.getId(), measurement.getTemperature(),
         measurement.getMeasurementTime(), measurement.getDeleteFlg(),
         measurement.getCity().getName());
-  }
-
-  @Override
-  public MeasurementUpdateResponse updateMeasurement(MeasurementUpdateRequest request) {
-
-    validationUtil.validateRequest(request);
-
-    Optional<Measurement> optionalMeasurement = measurementRepository.findById(request.id());
-    if (optionalMeasurement.isEmpty()) {
-      throw new ServiceException(HttpStatus.BAD_REQUEST, MEASUREMENT_NOT_FOUND_ERROR);
-    }
-    Measurement measurement = optionalMeasurement.get();
-    if (Objects.nonNull(request.temperature())) {
-      measurement.setTemperature(request.temperature());
-    }
-    if (Objects.nonNull(request.measurementTime())) {
-      measurement.setMeasurementTime(request.measurementTime());
-    }
-    if (Objects.nonNull(request.cityId())) {
-      Optional<City> optionalCity = cityRepository.findById(request.cityId());
-      if (optionalCity.isEmpty()) {
-        throw new ServiceException(HttpStatus.BAD_REQUEST, CITY_NOT_FOUND_ERROR);
-      }
-      measurement.setCity(optionalCity.get());
-    }
-    measurementRepository.save(measurement);
-
-    return new MeasurementUpdateResponse(measurement.getId(), measurement.getTemperature(),
-        measurement.getMeasurementTime(), measurement.getDeleteFlg(),
-        measurement.getCity().getName());
-  }
-
-  @Override
-  public MeasurementDeleteResponse deleteMeasurement(MeasurementDeleteRequest request) {
-    return null;
   }
 }

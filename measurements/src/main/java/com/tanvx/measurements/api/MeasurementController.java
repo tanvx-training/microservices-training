@@ -4,12 +4,9 @@ import com.tanvx.measurements.app.dto.exception.ValidationException;
 import com.tanvx.measurements.infrastructure.common.ApiResponse;
 import com.tanvx.measurements.domain.measurement.dto.request.MeasurementCreateRequest;
 import com.tanvx.measurements.domain.measurement.dto.request.MeasurementRequest;
-import com.tanvx.measurements.domain.measurement.dto.request.MeasurementUpdateRequest;
 import com.tanvx.measurements.domain.measurement.dto.response.MeasurementCityResponse;
 import com.tanvx.measurements.domain.measurement.dto.response.MeasurementCreateResponse;
-import com.tanvx.measurements.domain.measurement.dto.response.MeasurementDeleteResponse;
 import com.tanvx.measurements.domain.measurement.dto.response.MeasurementResponse;
-import com.tanvx.measurements.domain.measurement.dto.response.MeasurementUpdateResponse;
 import com.tanvx.measurements.domain.measurement.service.MeasurementService;
 import java.time.Duration;
 import java.time.Instant;
@@ -17,7 +14,6 @@ import java.time.Instant;
 import com.tanvx.measurements.infrastructure.constant.MethodType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +29,13 @@ public class MeasurementController {
   @PostMapping("/measurements")
   public ResponseEntity<ApiResponse<MeasurementCreateResponse>> createMeasurement(@RequestBody
   MeasurementCreateRequest request) {
-
-    return null;
+    log.info("Invoking MeasurementController - createMeasurement: request={}", request);
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(ApiResponse.<MeasurementCreateResponse>builder()
+            .data(measurementService.createMeasurement(request))
+            .executionTime(Duration.ofMinutes(0))
+            .message("Success")
+            .build());
   }
 
   // Get All Measurements
@@ -71,20 +72,5 @@ public class MeasurementController {
                       .executionTime(Duration.between(start, end))
                       .message("Success")
                       .build());
-  }
-
-  // Update a Measurement
-  @PutMapping("/measurements/{id}")
-  public ResponseEntity<ApiResponse<MeasurementUpdateResponse>> updateMeasurement(
-      @PathVariable Long id, @RequestBody MeasurementUpdateRequest request) {
-
-    return null;
-  }
-
-  // Delete a Measurement
-  @DeleteMapping("/measurements/{id}")
-  public ResponseEntity<ApiResponse<MeasurementDeleteResponse>> deleteMeasurement(
-      @PathVariable Long id) {
-    return null;
   }
 }

@@ -1,4 +1,4 @@
-package com.tanvx.measurements.domain.measurement.dto.response;
+package com.tanvx.measurements.domain.measurement.repository.query;
 
 import java.time.LocalDateTime;
 
