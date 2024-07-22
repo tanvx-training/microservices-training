@@ -1,1 +1,1 @@
-![microservices](jwt-security-security-workflow.png)
+![microservices](../jwt-security-security-workflow.png)
