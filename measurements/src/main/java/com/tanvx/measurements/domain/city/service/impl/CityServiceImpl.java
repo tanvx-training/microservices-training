@@ -51,9 +51,9 @@ public class CityServiceImpl implements CityService {
   }
 
   @Override
-  public CityResponse findCityByName(String name) {
+  public CityResponse findCityById(Long cityId) {
 
-    Optional<City> optionalCity = cityRepository.findByName(name);
+    Optional<City> optionalCity = cityRepository.findById(cityId);
     if(optionalCity.isEmpty()) {
       throw new ServiceException(HttpStatus.BAD_REQUEST, CITY_NOT_FOUND_ERROR);
     }

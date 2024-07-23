@@ -17,10 +17,10 @@ public interface CityService {
 
   /**
    * Method to find city by name
-   * @param name String
+   * @param cityId Long
    * @return CityResponse
    */
-  CityResponse findCityByName(String name);
+  CityResponse findCityById(Long cityId);
 
   /**
    * Method to create a new city
