@@ -1,4 +1,4 @@
-package com.tanvx.users.enums;
+package com.tanvx.users.infrastructure.constant;
 
 import java.util.Collections;
 import java.util.List;
@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import static com.tanvx.users.enums.Permission.*;
+import static com.tanvx.users.infrastructure.constant.Permission.*;
 
 @RequiredArgsConstructor
 public enum Role {

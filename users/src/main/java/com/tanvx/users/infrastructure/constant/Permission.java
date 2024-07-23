@@ -1,4 +1,4 @@
-package com.tanvx.users.enums;
+package com.tanvx.users.infrastructure.constant;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
