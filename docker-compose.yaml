@@ -19,7 +19,7 @@ services:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: customers
+      MYSQL_DATABASE: user-service
     volumes:
       - mysql:/var/lib/mysql
     ports:

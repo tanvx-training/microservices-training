@@ -1,5 +1,5 @@
 package com.tanvx.measurements.domain.measurement.dto.request;
 
-public class MeasurementRequest {
+public record MeasurementRequest (Long cityId, Integer page, Integer size, String sort, String order) {
 
 }

@@ -1,8 +1,11 @@
 package com.tanvx.measurements.domain.measurement.repository;
 
+import com.tanvx.measurements.domain.city.entity.City;
 import com.tanvx.measurements.domain.measurement.entity.Measurement;
 import com.tanvx.measurements.domain.measurement.repository.query.MeasurementCityNativeQueryResponse;
 import com.tanvx.measurements.domain.measurement.repository.query.MeasurementCityQueryResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,6 +13,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MeasurementRepository extends JpaRepository<Measurement, Long> {
+  /**Paging using JPA **/
+  Page<Measurement> findAllByCity(City city, Pageable pageable);
 
   /**Using JPA with JPQL**/
   @Query("""

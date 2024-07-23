@@ -19,12 +19,16 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +39,6 @@ public class MeasurementServiceImpl implements MeasurementService {
 
   private static final String CITY_NOT_FOUND_ERROR = "City not found";
 
-  private static final String MEASUREMENT_NOT_FOUND_ERROR = "Measurement not found";
-
   private final ValidationUtil validationUtil;
 
   private final MeasurementRepository measurementRepository;
@@ -44,8 +46,26 @@ public class MeasurementServiceImpl implements MeasurementService {
   private final CityRepository cityRepository;
 
   @Override
-  public Page<MeasurementResponse> findMeasurement(MeasurementRequest request) {
-    return null;
+  public Map<String, Page<MeasurementResponse>> findMeasurement(MeasurementRequest request) {
+    Optional<City> optionalCity = cityRepository.findById(request.cityId());
+    if (optionalCity.isEmpty()) {
+      throw new ServiceException(HttpStatus.BAD_REQUEST, CITY_NOT_FOUND_ERROR);
+    }
+    Sort sort = null;
+    if (Objects.nonNull(request.sort())) {
+      sort = Sort.by(Objects.equals(request.order(), "desc") ? Direction.DESC : Direction.ASC,
+          request.sort());
+    }
+    City city = optionalCity.get();
+    Pageable pageable = PageRequest.of(request.page(), request.size(), sort);
+    Page<Measurement> measurementPage = measurementRepository.findAllByCity(city,
+        pageable);
+
+    return Map.of(city.getName(), measurementPage.map(m -> MeasurementResponse.builder()
+        .id(m.getId())
+        .temperature(m.getTemperature())
+        .measurementTime(m.getMeasurementTime())
+        .build()));
   }
 
   @Override
@@ -151,21 +171,21 @@ public class MeasurementServiceImpl implements MeasurementService {
     }
     // Find max measurement by temperature and city id
     MeasurementCityQueryResponse max = measurementRepository
-            .findMeasurementWithMaxTemperature(cityId);
+        .findMeasurementWithMaxTemperature(cityId);
     // Find min measurement by temperature and city id
     MeasurementCityQueryResponse min = measurementRepository
-            .findMeasurementWithMinTemperature(cityId);
+        .findMeasurementWithMinTemperature(cityId);
     // Find average measurement by temperature and city id
     Double averageTemperature = measurementRepository.findMeasurementWithAverageTemperature(cityId);
 
     return MeasurementCityResponse.builder()
-            .city(optionalCity.get().getName())
-            .max(MeasurementCityData.builder().temperature(max.temperature())
-                    .measurementTime(max.measurementTime()).build())
-            .min(MeasurementCityData.builder().temperature(min.temperature())
-                    .measurementTime(min.measurementTime()).build())
-            .average(BigDecimal.valueOf(averageTemperature).setScale(2, RoundingMode.HALF_UP))
-            .build();
+        .city(optionalCity.get().getName())
+        .max(MeasurementCityData.builder().temperature(max.temperature())
+            .measurementTime(max.measurementTime()).build())
+        .min(MeasurementCityData.builder().temperature(min.temperature())
+            .measurementTime(min.measurementTime()).build())
+        .average(BigDecimal.valueOf(averageTemperature).setScale(2, RoundingMode.HALF_UP))
+        .build();
   }
 
   @Override

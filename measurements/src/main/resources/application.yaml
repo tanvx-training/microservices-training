@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: measurement
+    name: measurement-service
   datasource:
     url: jdbc:postgresql://localhost:5433/measurement-service
     username: postgres
