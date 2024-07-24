@@ -27,11 +27,23 @@ services:
     networks:
       - mysql
     restart: unless-stopped
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb:/data/db
+    networks:
+      - mongodb
 networks:
   postgres:
     driver: bridge
   mysql:
     driver: bridge
+  mongodb:
+    driver: bridge
 volumes:
   postgres:
   mysql:
+  mongodb:
