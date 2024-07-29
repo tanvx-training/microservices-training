@@ -1,5 +1,6 @@
 package com.tanvx.users.domain.user.service.impl;
 
+import com.tanvx.users.app.client.MeasurementFeignClient;
 import com.tanvx.users.app.jwt.JwtService;
 import com.tanvx.users.domain.user.dto.request.UserRegisterRequest;
 import com.tanvx.users.domain.user.dto.request.UserSignInRequest;
@@ -10,6 +11,7 @@ import com.tanvx.users.domain.user.repository.UserRepository;
 import com.tanvx.users.domain.user.service.UserService;
 import com.tanvx.users.infrastructure.constant.Role;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.service.spi.ServiceException;
@@ -26,6 +28,8 @@ public class UserServiceImpl implements UserService {
 
   private static final String USER_NOT_FOUND = "User not found";
 
+  private static final String QUERY_METHOD = "JPA_WITH_NATIVE";
+
   private final UserRepository userRepository;
 
   private final PasswordEncoder passwordEncoder;
@@ -33,6 +37,8 @@ public class UserServiceImpl implements UserService {
   private final JwtService jwtService;
 
   private final AuthenticationManager authenticationManager;
+
+  private final MeasurementFeignClient measurementFeignClient;
 
   @Override
   public UserAuthenticationResponse registerUser(UserRegisterRequest request) {
@@ -70,7 +76,9 @@ public class UserServiceImpl implements UserService {
       throw new ServiceException(USER_NOT_FOUND);
     }
     User user = optionalUser.get();
+    var measurement = measurementFeignClient.getMeasurementsByCityId(user.getCityId(),
+        QUERY_METHOD);
     return new UserResponse(user.getName(), user.getEmail(), user.getCityId(), user.getCreatedAt(),
-        user.getCreatedBy());
+        user.getCreatedBy(), Objects.requireNonNull(measurement.getBody()).getData());
   }
 }

@@ -17,6 +17,14 @@ spring:
       hibernate:
         format_sql: true
     database: mysql
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            read-timeout: 160000000
+            connect-timeout: 160000000
+
 
 security:
   jwt:

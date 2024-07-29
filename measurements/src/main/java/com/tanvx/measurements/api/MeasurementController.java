@@ -70,7 +70,7 @@ public class MeasurementController {
   }
 
   // Get Measurements by City ID
-  @GetMapping("/cities/{cityId}/measurements")
+  @GetMapping("/measurements/{cityId}/city")
   public ResponseEntity<ApiResponse<MeasurementCityResponse>> getMeasurementsByCityId(
       @PathVariable Long cityId, @RequestParam("method") String method) {
     log.info("Invoking MeasurementController - getMeasurementsByCityId: cityId={}, method={}",
