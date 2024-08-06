@@ -1,25 +1,26 @@
 package com.tanvx.measurements.api;
 
-import com.tanvx.measurements.app.dto.exception.ValidationException;
-import com.tanvx.measurements.domain.city.entity.City;
-import com.tanvx.measurements.domain.measurement.dto.request.MeasurementRequest;
-import com.tanvx.measurements.infrastructure.common.ApiResponse;
 import com.tanvx.measurements.domain.measurement.dto.request.MeasurementCreateRequest;
+import com.tanvx.measurements.domain.measurement.dto.request.MeasurementRequest;
 import com.tanvx.measurements.domain.measurement.dto.response.MeasurementCityResponse;
 import com.tanvx.measurements.domain.measurement.dto.response.MeasurementCreateResponse;
 import com.tanvx.measurements.domain.measurement.dto.response.MeasurementResponse;
 import com.tanvx.measurements.domain.measurement.service.MeasurementService;
+import com.tanvx.measurements.infrastructure.common.ApiResponse;
 import java.time.Duration;
 import java.time.Instant;
-
-import com.tanvx.measurements.infrastructure.constant.MethodType;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
@@ -75,19 +76,9 @@ public class MeasurementController {
       @PathVariable Long cityId, @RequestParam("method") String method) {
     log.info("Invoking MeasurementController - getMeasurementsByCityId: cityId={}, method={}",
         cityId, method);
-    MethodType methodType;
-    try {
-      methodType = Enum.valueOf(MethodType.class, method);
-    } catch (RuntimeException e) {
-      throw new ValidationException("Method type", "Invalid method type.");
-    }
     Instant start = Instant.now();
     MeasurementCityResponse response =
-        switch (methodType) {
-          case JPA -> measurementService.findMeasurementUsingJpa(cityId);
-          case JPA_WITH_JPQL -> measurementService.findMeasurementUsingJpaWithJPQL(cityId);
-          case JPA_WITH_NATIVE -> measurementService.findMeasurementUsingJpaWithNativeQuery(cityId);
-        };
+        measurementService.findMeasurementByCityId(cityId);
     Instant end = Instant.now();
     return ResponseEntity.status(HttpStatus.OK)
         .body(ApiResponse

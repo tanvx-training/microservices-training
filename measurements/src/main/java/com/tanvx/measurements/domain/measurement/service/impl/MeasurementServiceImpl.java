@@ -69,74 +69,7 @@ public class MeasurementServiceImpl implements MeasurementService {
   }
 
   @Override
-  public MeasurementCityResponse findMeasurementUsingJpa(Long cityId) {
-    // Validate city ID
-    Optional<City> optionalCity = cityRepository.findById(cityId);
-    if (optionalCity.isEmpty()) {
-      throw new ServiceException(HttpStatus.BAD_REQUEST, CITY_NOT_FOUND_ERROR);
-    }
-    // Initial
-    Optional<Measurement> measurementMax = Optional.empty();
-    Optional<Measurement> measurementMin = Optional.empty();
-
-    int defaultPage = 0;
-    int defaultSize = 1000;
-    double totalTemperature = 0;
-    long totalCount = 0;
-    Pageable pageable = PageRequest.of(defaultPage, defaultSize);
-    Page<Measurement> measurementPage;
-
-    do {
-      measurementPage = measurementRepository.findAll(pageable);
-      // Find max temperature in current page
-      Optional<Measurement> max = measurementPage.getContent().stream()
-          .max(Comparator.comparing(Measurement::getTemperature));
-      if (measurementMax.isEmpty()) {
-        measurementMax = max;
-      } else {
-        if (max.isPresent() && (max.get().getTemperature() > measurementMax.get()
-            .getTemperature())) {
-          measurementMax = max;
-        }
-      }
-      // Find min temperature in current page
-      Optional<Measurement> min = measurementPage.getContent().stream()
-          .min(Comparator.comparing(Measurement::getTemperature));
-      if (measurementMin.isEmpty()) {
-        measurementMin = min;
-      } else {
-        if (min.isPresent() && (min.get().getTemperature() < measurementMin.get()
-            .getTemperature())) {
-          measurementMin = min;
-        }
-      }
-      // Calculate total temperature and count in current page
-      totalTemperature += measurementPage.getContent()
-          .stream()
-          .mapToDouble(Measurement::getTemperature)
-          .sum();
-      totalCount += measurementPage.getNumberOfElements();
-      pageable = pageable.next();
-    } while (measurementPage.hasNext());
-
-    BigDecimal averageTemperature = totalCount > 0
-        ? BigDecimal.valueOf(totalTemperature / totalCount).setScale(2, RoundingMode.HALF_UP)
-        : BigDecimal.valueOf(Double.NaN);
-
-    return MeasurementCityResponse.builder()
-        .city(optionalCity.get().getName())
-        .max(measurementMax.map(m -> MeasurementCityData.builder().temperature(m.getTemperature())
-                .measurementTime(m.getMeasurementTime()).build())
-            .orElse(MeasurementCityData.builder().build()))
-        .min(measurementMin.map(m -> MeasurementCityData.builder().temperature(m.getTemperature())
-            .measurementTime(m.getMeasurementTime()).build()).orElse(MeasurementCityData.builder()
-            .build()))
-        .average(averageTemperature)
-        .build();
-  }
-
-  @Override
-  public MeasurementCityResponse findMeasurementUsingJpaWithNativeQuery(Long cityId) {
+  public MeasurementCityResponse findMeasurementByCityId(Long cityId) {
 
     // Validate city ID
     Optional<City> optionalCity = cityRepository.findById(cityId);
@@ -158,32 +91,6 @@ public class MeasurementServiceImpl implements MeasurementService {
             .measurementTime(maxTemperature.getMeasurementTime()).build())
         .min(MeasurementCityData.builder().temperature(minTemperature.getTemperature())
             .measurementTime(minTemperature.getMeasurementTime()).build())
-        .average(BigDecimal.valueOf(averageTemperature).setScale(2, RoundingMode.HALF_UP))
-        .build();
-  }
-
-  @Override
-  public MeasurementCityResponse findMeasurementUsingJpaWithJPQL(Long cityId) {
-    // Validate city ID
-    Optional<City> optionalCity = cityRepository.findById(cityId);
-    if (optionalCity.isEmpty()) {
-      throw new ServiceException(HttpStatus.BAD_REQUEST, CITY_NOT_FOUND_ERROR);
-    }
-    // Find max measurement by temperature and city id
-    MeasurementCityQueryResponse max = measurementRepository
-        .findMeasurementWithMaxTemperature(cityId);
-    // Find min measurement by temperature and city id
-    MeasurementCityQueryResponse min = measurementRepository
-        .findMeasurementWithMinTemperature(cityId);
-    // Find average measurement by temperature and city id
-    Double averageTemperature = measurementRepository.findMeasurementWithAverageTemperature(cityId);
-
-    return MeasurementCityResponse.builder()
-        .city(optionalCity.get().getName())
-        .max(MeasurementCityData.builder().temperature(max.temperature())
-            .measurementTime(max.measurementTime()).build())
-        .min(MeasurementCityData.builder().temperature(min.temperature())
-            .measurementTime(min.measurementTime()).build())
         .average(BigDecimal.valueOf(averageTemperature).setScale(2, RoundingMode.HALF_UP))
         .build();
   }

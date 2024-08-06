@@ -13,16 +13,7 @@ public interface MeasurementService {
 
   Map<String, Page<MeasurementResponse>> findMeasurement(MeasurementRequest request);
 
-  MeasurementCityResponse findMeasurementUsingJpa(Long cityId);
+  MeasurementCityResponse findMeasurementByCityId(Long cityId);
 
-  MeasurementCityResponse findMeasurementUsingJpaWithNativeQuery(Long cityId);
-
-  MeasurementCityResponse findMeasurementUsingJpaWithJPQL(Long cityId);
-
-  /**
-   * Create new measurement
-   * @param request MeasurementCreateRequest
-   * @return MeasurementCreateResponse
-   */
   MeasurementCreateResponse createMeasurement(MeasurementCreateRequest request);
 }
