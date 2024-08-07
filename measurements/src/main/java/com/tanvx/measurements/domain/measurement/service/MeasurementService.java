@@ -6,12 +6,13 @@ import com.tanvx.measurements.domain.measurement.dto.request.MeasurementRequest;
 import com.tanvx.measurements.domain.measurement.dto.response.MeasurementCityResponse;
 import com.tanvx.measurements.domain.measurement.dto.response.MeasurementCreateResponse;
 import com.tanvx.measurements.domain.measurement.dto.response.MeasurementResponse;
+import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Page;
 
 public interface MeasurementService {
 
-  Map<String, Page<MeasurementResponse>> findMeasurement(MeasurementRequest request);
+  List<MeasurementResponse> findMeasurement(MeasurementRequest request);
 
   MeasurementCityResponse findMeasurementByCityId(Long cityId);
 

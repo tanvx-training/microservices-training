@@ -9,6 +9,7 @@ import com.tanvx.measurements.domain.measurement.service.MeasurementService;
 import com.tanvx.measurements.infrastructure.common.ApiResponse;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,31 +48,28 @@ public class MeasurementController {
   }
 
   // Get All Measurements
-  @GetMapping("/measurements/{cityId}/")
-  public ResponseEntity<ApiResponse<Map<String, Page<MeasurementResponse>>>> getAllMeasurements(
+  @GetMapping("/measurements/{cityId}/city")
+  public ResponseEntity<ApiResponse<List<MeasurementResponse>>> getAllMeasurements(
       @PathVariable("cityId") Long cityId,
       @RequestParam(defaultValue = "0") Integer page,
-      @RequestParam(defaultValue = "50") Integer size,
-      @RequestParam(defaultValue = "measurementTime") String sort,
-      @RequestParam(defaultValue = "asc") String order) {
+      @RequestParam(defaultValue = "50") Integer size) {
 
     log.info(
-        "Invoking MeasurementController - getAllMeasurements: page={}, size={}, sort={}, order={}",
-        page, size, sort, order);
+        "Invoking MeasurementController - getAllMeasurements: page={}, size={}", page, size);
     Instant start = Instant.now();
-    Map<String, Page<MeasurementResponse>> measurementResponsePage = measurementService.findMeasurement(
-        new MeasurementRequest(cityId, page, size, sort, order));
+    List<MeasurementResponse> responses = measurementService.findMeasurement(
+        new MeasurementRequest(cityId, page, size));
     Instant end = Instant.now();
     return ResponseEntity.status(HttpStatus.OK)
-        .body(ApiResponse.<Map<String, Page<MeasurementResponse>>>builder()
-            .data(measurementResponsePage)
+        .body(ApiResponse.<List<MeasurementResponse>>builder()
+            .data(responses)
             .executionTime(Duration.between(start, end))
             .message("Success")
             .build());
   }
 
   // Get Measurements by City ID
-  @GetMapping("/measurements/{cityId}/city")
+  @GetMapping("/measurements/{cityId}/city/info")
   public ResponseEntity<ApiResponse<MeasurementCityResponse>> getMeasurementsByCityId(
       @PathVariable Long cityId, @RequestParam("method") String method) {
     log.info("Invoking MeasurementController - getMeasurementsByCityId: cityId={}, method={}",

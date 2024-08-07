@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -46,26 +47,21 @@ public class MeasurementServiceImpl implements MeasurementService {
   private final CityRepository cityRepository;
 
   @Override
-  public Map<String, Page<MeasurementResponse>> findMeasurement(MeasurementRequest request) {
+  public List<MeasurementResponse> findMeasurement(MeasurementRequest request) {
     Optional<City> optionalCity = cityRepository.findById(request.cityId());
     if (optionalCity.isEmpty()) {
       throw new ServiceException(HttpStatus.BAD_REQUEST, CITY_NOT_FOUND_ERROR);
     }
-    Sort sort = null;
-    if (Objects.nonNull(request.sort())) {
-      sort = Sort.by(Objects.equals(request.order(), "desc") ? Direction.DESC : Direction.ASC,
-          request.sort());
-    }
-    City city = optionalCity.get();
-    Pageable pageable = PageRequest.of(request.page(), request.size(), sort);
-    Page<Measurement> measurementPage = measurementRepository.findAllByCity(city,
-        pageable);
-
-    return Map.of(city.getName(), measurementPage.map(m -> MeasurementResponse.builder()
-        .id(m.getId())
-        .temperature(m.getTemperature())
-        .measurementTime(m.getMeasurementTime())
-        .build()));
+    Pageable pageable = PageRequest.of(request.page(), request.size(),
+        Sort.by(Direction.ASC, "measurementTime"));
+    return measurementRepository.findAllByCityId(request.cityId(), pageable).getContent()
+        .stream()
+        .map(e -> MeasurementResponse.builder()
+            .id(e.getId())
+            .temperature(e.getTemperature())
+            .measurementTime(e.getMeasurementTime())
+            .build())
+        .toList();
   }
 
   @Override

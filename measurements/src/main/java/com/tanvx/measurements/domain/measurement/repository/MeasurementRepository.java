@@ -1,9 +1,11 @@
 package com.tanvx.measurements.domain.measurement.repository;
 
 import com.tanvx.measurements.domain.city.entity.City;
+import com.tanvx.measurements.domain.measurement.dto.response.MeasurementResponse;
 import com.tanvx.measurements.domain.measurement.entity.Measurement;
 import com.tanvx.measurements.domain.measurement.repository.query.MeasurementCityNativeQueryResponse;
 import com.tanvx.measurements.domain.measurement.repository.query.MeasurementCityQueryResponse;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,42 +15,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MeasurementRepository extends JpaRepository<Measurement, Long> {
+
   /**Paging using JPA **/
-  Page<Measurement> findAllByCity(City city, Pageable pageable);
+  Page<Measurement> findAllByCityId(Long cityId, Pageable pageable);
 
-  /**Using JPA with JPQL**/
-  @Query("""
-  SELECT new com.tanvx.measurements.domain.measurement.repository.query.MeasurementCityQueryResponse(m.temperature, m.measurementTime)
-  FROM Measurement m
-  JOIN FETCH City c
-  ON m.city.id = c.id
-  WHERE c.id = :cityId
-      AND m.deleteFlg = FALSE
-  ORDER BY m.temperature
-  DESC LIMIT 1""")
-  MeasurementCityQueryResponse findMeasurementWithMaxTemperature(@Param("cityId") Long id);
-
-  @Query("""
-  SELECT new com.tanvx.measurements.domain.measurement.repository.query.MeasurementCityQueryResponse(m.temperature, m.measurementTime)
-  FROM Measurement m
-  JOIN FETCH City c
-  ON m.city.id = c.id
-  WHERE c.id = :cityId
-    AND m.deleteFlg = FALSE
-  ORDER BY m.temperature
-  ASC LIMIT 1""")
-  MeasurementCityQueryResponse findMeasurementWithMinTemperature(@Param("cityId") Long id);
-
-  @Query("""
-  SELECT AVG(m.temperature)
-  FROM Measurement m
-    JOIN FETCH City c
-  ON m.city.id = c.id
-  WHERE c.id = :cityId
-    AND m.deleteFlg = false""")
-  Double findMeasurementWithAverageTemperature(@Param("cityId") Long id);
-
-  /**Using JPA with Native Query**/
   @Query(nativeQuery = true,
       value = """
           SELECT m.temperature, m.measurement_time FROM _measurement m
@@ -66,7 +36,7 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Long> 
           ORDER BY m.temperature ASC
           LIMIT 1"""
   )
-  MeasurementCityNativeQueryResponse  findMinMeasurementByTemperatureAndCityId(
+  MeasurementCityNativeQueryResponse findMinMeasurementByTemperatureAndCityId(
       @Param("cityId") Long cityId);
 
   @Query(nativeQuery = true,
