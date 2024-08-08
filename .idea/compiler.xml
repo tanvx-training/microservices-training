@@ -11,11 +11,13 @@
         <module name="eureka-server" />
         <module name="users" />
         <module name="measurements" />
+        <module name="measurements (1)" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="eureka-server" target="17" />
       <module name="measurements" target="17" />
+      <module name="measurements (1)" target="17" />
       <module name="notification" target="17" />
       <module name="users" target="17" />
     </bytecodeTargetLevel>
@@ -24,6 +26,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="eureka-server" options="-parameters" />
       <module name="measurements" options="-parameters" />
+      <module name="measurements (1)" options="-parameters" />
       <module name="notification" options="-parameters" />
       <module name="users" options="-parameters" />
     </option>
