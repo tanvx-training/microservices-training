@@ -8,13 +8,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="notification" />
+        <module name="cities" />
         <module name="eureka-server" />
         <module name="users" />
         <module name="measurements" />
-        <module name="measurements (1)" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="cities" target="17" />
       <module name="eureka-server" target="17" />
       <module name="measurements" target="17" />
       <module name="measurements (1)" target="17" />
@@ -24,6 +25,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="cities" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
       <module name="measurements" options="-parameters" />
       <module name="measurements (1)" options="-parameters" />

@@ -1,5 +1,6 @@
 package com.tanvx.cities.domain.measurement.service.impl;
 
+import com.tanvx.cities.domain.client.CityFeignClient;
 import com.tanvx.cities.domain.measurement.dto.request.MeasurementCreateRequest;
 import com.tanvx.cities.domain.measurement.dto.request.MeasurementRequest;
 import com.tanvx.cities.domain.measurement.dto.response.MeasurementCityResponse;
@@ -19,8 +20,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -32,11 +31,15 @@ public class MeasurementServiceImpl implements MeasurementService {
 
   private final MeasurementRepository measurementRepository;
 
+  private final CityFeignClient cityFeignClient;
+
   @Override
   public List<MeasurementResponse> findMeasurement(MeasurementRequest request) {
 
-    Pageable pageable = PageRequest.of(request.page(), request.size(),
-        Sort.by(Direction.ASC, "measurementTime"));
+    cityFeignClient.findCityById(request.cityId());
+
+    Pageable pageable = PageRequest.of(request.page(), request.size());
+
     return measurementRepository.findAllByCityId(request.cityId(), pageable).getContent()
         .stream()
         .map(e -> MeasurementResponse.builder()
@@ -50,13 +53,14 @@ public class MeasurementServiceImpl implements MeasurementService {
   @Override
   public MeasurementCityResponse findMeasurementByCityId(Long cityId) {
 
-    // Find max measurement by temperature and city id
+    cityFeignClient.findCityById(cityId);
+
     MeasurementCityNativeQueryResponse maxTemperature = measurementRepository
         .findMaxMeasurementByTemperatureAndCityId(cityId);
-    // Find min measurement by temperature and city id
+
     MeasurementCityNativeQueryResponse minTemperature = measurementRepository
         .findMinMeasurementByTemperatureAndCityId(cityId);
-    // Find average measurement by temperature and city id
+
     Double averageTemperature = measurementRepository.findAverageTemperature(cityId);
 
     return MeasurementCityResponse.builder()
@@ -72,6 +76,7 @@ public class MeasurementServiceImpl implements MeasurementService {
   public MeasurementCreateResponse createMeasurement(MeasurementCreateRequest request) {
 
     validationUtil.validateRequest(request);
+    cityFeignClient.findCityById(request.cityId());
 
     Measurement measurement = new Measurement();
     measurement.setTemperature(request.temperature());

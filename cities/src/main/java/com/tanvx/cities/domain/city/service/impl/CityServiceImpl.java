@@ -39,13 +39,10 @@ public class CityServiceImpl implements CityService {
 
     validationUtil.validateRequest(request);
 
-    Pageable pageable;
-    if(Objects.nonNull(request.field())) {
-      Sort sort = Sort.by(Direction.ASC, request.field());
-      pageable = PageRequest.of(request.page(), request.size(), sort);
-    } else {
-      pageable = PageRequest.of(request.page(), request.size());
-    }
+    Pageable pageable =
+        Objects.nonNull(request.sort())
+            ? PageRequest.of(request.page() - 1, request.size(), Sort.by(Direction.ASC, request.sort()))
+            : PageRequest.of(request.page() - 1, request.size());
 
     return cityRepository.findAllCity(pageable);
   }
@@ -54,7 +51,7 @@ public class CityServiceImpl implements CityService {
   public CityResponse findCityById(Long cityId) {
 
     Optional<City> optionalCity = cityRepository.findById(cityId);
-    if(optionalCity.isEmpty()) {
+    if (optionalCity.isEmpty()) {
       throw new ServiceException(HttpStatus.BAD_REQUEST, CITY_NOT_FOUND_ERROR);
     }
     City city = optionalCity.get();
@@ -67,7 +64,7 @@ public class CityServiceImpl implements CityService {
     validationUtil.validateRequest(request);
 
     Optional<City> optionalCity = cityRepository.findByName(request.name());
-    if(optionalCity.isPresent()) {
+    if (optionalCity.isPresent()) {
       throw new ServiceException(HttpStatus.BAD_REQUEST, CITY_NAME_EXISTED_ERROR);
     }
     City city = new City();

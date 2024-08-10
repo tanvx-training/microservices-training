@@ -14,6 +14,6 @@ public interface CityRepository extends JpaRepository<City, Long> {
 
   Optional<City> findByName(String name);
 
-  @Query("SELECT c.id, c.name FROM City c")
+  @Query("SELECT new com.tanvx.cities.domain.city.dto.response.CityResponse(c.id, c.name) FROM City c")
   Page<CityResponse> findAllCity(Pageable pageable);
 }

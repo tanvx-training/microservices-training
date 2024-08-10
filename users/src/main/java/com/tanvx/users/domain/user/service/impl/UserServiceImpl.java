@@ -24,11 +24,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-  private static final String USER_SIGN_IN_FAILURE = "Sign In Failed";
+  private static final String USER_SIGN_IN_FAILURE = "Sign in failed";
 
   private static final String USER_NOT_FOUND = "User not found";
-
-  private static final String QUERY_METHOD = "JPA_WITH_NATIVE";
 
   private final UserRepository userRepository;
 
@@ -76,8 +74,7 @@ public class UserServiceImpl implements UserService {
       throw new ServiceException(USER_NOT_FOUND);
     }
     User user = optionalUser.get();
-    var measurement = measurementFeignClient.getMeasurementsByCityId(user.getCityId(),
-        QUERY_METHOD);
+    var measurement = measurementFeignClient.getMeasurementsByCityId(user.getCityId());
     return new UserResponse(user.getName(), user.getEmail(), user.getCityId(), user.getCreatedAt(),
         user.getCreatedBy(), Objects.requireNonNull(measurement.getBody()).getData());
   }

@@ -39,8 +39,7 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Long> 
       value = """
           SELECT AVG(temperature) as average
           FROM _measurement as m
-                   INNER JOIN _city c on m.city_id = c.id
-          WHERE c.id = :cityId"""
+          WHERE m.city_id = :cityId"""
   )
   Double findAverageTemperature(@Param("cityId") Long cityId);
 }
