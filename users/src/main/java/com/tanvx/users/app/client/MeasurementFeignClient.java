@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient("measurement-service")
 public interface MeasurementFeignClient {
 
-  @GetMapping(value = "/measurements/{cityId}/city", consumes = "application/json")
+  @GetMapping(value = "/api/v1/measurements/{cityId}/city", consumes = "application/json")
   ResponseEntity<ApiResponse<MeasurementCityResponse>> getMeasurementsByCityId(
       @PathVariable Long cityId);
 }
