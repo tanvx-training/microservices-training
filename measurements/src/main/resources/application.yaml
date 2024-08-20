@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: measurement-service
+    name: MEASUREMENT-SERVICE
   datasource:
     url: jdbc:postgresql://localhost:5433/measurement-service
     username: postgres
@@ -30,6 +30,7 @@ debug: true
 eureka:
   instance:
     prefer-ip-address: true
+    hostname: localhost
   client:
     register-with-eureka: true
     fetch-registry: true

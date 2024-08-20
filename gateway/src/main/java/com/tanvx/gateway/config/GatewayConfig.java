@@ -1,5 +1,6 @@
 package com.tanvx.gateway.config;
 
+import java.time.ZonedDateTime;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -12,13 +13,17 @@ public class GatewayConfig {
   public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
     return builder.routes()
         .route("city", r -> r.path("/api/v1/cities/**")
-            .uri("http://localhost:8085"))
+            .filters(f -> f.addResponseHeader("X-Response-Time", ZonedDateTime.now().toString()))
+            .uri("lb://CITY-SERVICE"))
         .route("measurement", r -> r.path("/api/v1/measurements/**")
-            .uri("http://localhost:8086"))
+            .filters(f -> f.addResponseHeader("X-Response-Time", ZonedDateTime.now().toString()))
+            .uri("lb://f"))
         .route("notification", r -> r.path("/api/v1/notifications/**")
-            .uri("http://localhost:8087"))
+            .filters(f -> f.addResponseHeader("X-Response-Time", ZonedDateTime.now().toString()))
+            .uri("lb://NOTIFICATION-SERVICE"))
         .route("user", r -> r.path("/api/v1/users/**")
-            .uri("http://localhost:8088"))
+            .filters(f -> f.addResponseHeader("X-Response-Time", ZonedDateTime.now().toString()))
+            .uri("lb://USER-SERVICE"))
         .build();
   }
 }

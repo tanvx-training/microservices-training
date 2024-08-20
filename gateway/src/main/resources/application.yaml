@@ -2,10 +2,11 @@ spring:
   application:
     name: gateway
   cloud:
-    discovery:
-      locator:
-        enabled: false
-        lowerCaseServiceId: true
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+          lowerCaseServiceId: true
 
 server:
   port: 8089
@@ -13,11 +14,25 @@ server:
 eureka:
   instance:
     prefer-ip-address: true
+    hostname: localhost
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    gateway:
+      enabled: true
+  info:
+    env:
+      enabled: true
+
 
 #resilience4j:
 #  circuitbreaker:
