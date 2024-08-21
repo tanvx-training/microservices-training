@@ -29,21 +29,37 @@ management:
   endpoint:
     gateway:
       enabled: true
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
   info:
     env:
       enabled: true
 
 
-#resilience4j:
-#  circuitbreaker:
-#    instances:
-#      myCircuitBreaker:
-#        register-health-indicator: true
-#        event-consumer-buffer-size: 10
-#        automatic-transition-from-open-to-half-open-enabled: true
-#        failure-rate-threshold: 50
-#        minimum-number-of-calls: 5
-#        permitted-number-of-calls-in-half-open-state: 3
-#        sliding-window-size: 10
-#        wait-duration-in-open-state: 55s
-#        sliding-window-type: COUNT_BASED
+resilience4j:
+  circuitbreaker:
+    instances:
+      cityCircuitBreaker:
+        permitted-number-of-calls-in-half-open-state: 3
+        sliding-window-size: 10
+        wait-duration-in-open-state: 10000  # 10 seconds in milliseconds
+        failure-rate-threshold: 50
+      measurementCircuitBreaker:
+        permitted-number-of-calls-in-half-open-state: 3
+        sliding-window-size: 10
+        wait-duration-in-open-state: 10000
+        failure-rate-threshold: 50
+        slow-call-duration-threshold: 100000
+      notificationCircuitBreaker:
+        permitted-number-of-calls-in-half-open-state: 3
+        sliding-window-size: 10
+        wait-duration-in-open-state: 10000
+        failure-rate-threshold: 50
+      userCircuitBreaker:
+        permitted-number-of-calls-in-half-open-state: 3
+        sliding-window-size: 10
+        wait-duration-in-open-state: 10000
+        failure-rate-threshold: 50
